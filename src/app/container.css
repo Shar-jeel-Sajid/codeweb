@@ -1,0 +1,20 @@
+.container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.box {
+    height: 100%;
+    background-color: #3498db; /* Default blue color */
+}
+
+.box2 {
+    background-color: #e74c3c; /* Default red color */
+}
+
+.resizer {
+    width: 10px; /* Width of the draggable divider */
+    background: #333; /* Color of the divider */
+    cursor: ew-resize; /* Cursor style for dragging */
+}
