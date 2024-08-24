@@ -1,57 +1,65 @@
 "use client";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import "./container.css";
 
 export default function Container() {
-  const [leftWidth, setLeftWidth] = useState("50%"); // Initial width for the left box
-  const [startX, setStartX] = useState(0); // Starting X position for dragging
-  const [startLeftWidth, setStartLeftWidth] = useState(0); // Starting width of the left box
-
-  // Function to handle the mouse down event on the resizer
+  const [leftWidth, setLeftWidth] = useState("50");
   const onMouseDown = (e) => {
-    setStartX(e.clientX);
-    setStartLeftWidth(parseInt(leftWidth, 10));
+    setLeftWidth(e.clientX);
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
   };
 
-  // Function to handle the mouse move event
-  const onMouseMove = useCallback(
-    (e) => {
-      const newWidth = startLeftWidth + (e.clientX - startX);
-      const containerWidth = window.innerWidth;
-      const newWidthPercent = Math.max(
-        0,
-        Math.min(100, (newWidth / containerWidth) * 100)
-      );
-      setLeftWidth(`${newWidthPercent}%`);
-    },
-    [startLeftWidth, startX]
-  );
+  const onMouseMove = useCallback((e) => {
+    setLeftWidth(e.clientX);
+  });
 
-  // Function to handle the mouse up event
   const onMouseUp = useCallback(() => {
     document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", onMouseUp);
   }, [onMouseMove]);
 
-  // Initialize ACE editor
-  useEffect(() => {
-    // Import ACE dynamically
-    import("ace-builds/src-noconflict/ace").then((ace) => {
-      const editor = ace.edit("editor");
-      editor.setTheme("ace/theme/monokai");
-      editor.session.setMode("ace/mode/c++");
-    });
-  }, []);
-
   return (
     <div className="container">
-      <div className="box" style={{ width: leftWidth }}></div>
-      <div className="resizer" onMouseDown={onMouseDown}></div>
-      <div className="box box2" style={{ width: `calc(100% - ${leftWidth})` }}>
-        <div id="editor" style={{ height: "100%", width: "100%" }}></div>
+      <div className="questionContainer" style={{ width: leftWidth }}></div>
+      <div
+        className="resizer"
+        onMouseDown={onMouseDown}
+        style={{ width: "5px", background: "blue", cursor: "ew-resize" }}
+      ></div>
+      <div className="editorContainer">
+        <EditAndTest></EditAndTest>
       </div>
+    </div>
+  );
+}
+
+function EditAndTest() {
+  const resizerHeight = "5px";
+  const [botHeight, setBotHeight] = useState("50");
+  const onMouseDown = (e) => {
+    setBotHeight(e.clientY);
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  };
+
+  const onMouseMove = useCallback((e) => {
+    setBotHeight(e.clientY);
+  });
+
+  const onMouseUp = useCallback(() => {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUp);
+  }, [onMouseMove]);
+  return (
+    <div className="editandtest">
+      <div className="edit" style={{ height: botHeight }}></div>
+      <div
+        className="resizer"
+        onMouseDown={onMouseDown}
+        style={{ height: "5px", background: "blue", cursor: "ns-resize" }}
+      ></div>
+      <div className="test"></div>
     </div>
   );
 }
